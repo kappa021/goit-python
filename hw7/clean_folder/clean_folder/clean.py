@@ -137,7 +137,8 @@ def remove_empty_dir(path):
 
 #-----------------main function---------------------
 def main():
-    path = r' '.join(sys.argv[1:])
+    path = r""
+    path = " ".join(sys.argv[1:])
     if path:
         traversing_folders(path)
         create_new_dir(path)
