@@ -135,6 +135,7 @@ def remove_empty_dir(path):
                 os.rmdir(s)
 
 
+#-----------------main function---------------------
 def main():
     path = r""
     path = ' '.join(sys.argv[1:])
