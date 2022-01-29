@@ -1,5 +1,4 @@
 import os, shutil, sys
-from itertools import groupby
 
 
 #--------------------- walk through files and folders -------------------------
@@ -60,7 +59,8 @@ def create_new_dir(path):
 def moving_files(path):
     incorrect_file, full_dirs = traversing_folders(path)
 
-    files_info = {'images': [], 'archives': [], 'documents': [], 'audio': [], 'video': [], 'unknown': [], 'known': []}
+    files_info = {'images': [], 'archives': [], 'documents': [], 'audio': [], 'video': [], 'unknown': set([]), 'known': set([])}
+
     for file in incorrect_file:
         dir_name = os.path.dirname(file)
         file_name = os.path.splitext(os.path.basename(file))
@@ -83,31 +83,31 @@ def moving_files(path):
                 new_path = path + '\\images\\' + correct_file_name
                 shutil.move(file, new_path)
                 files_info['images'].append(correct_file_name)
-                files_info['known'].append(file_extention)
-
+                files_info['known'].add(file_extention)
+                
             elif file_extention in video_extention:
                     new_path = path + "\\video\\" + correct_file_name
                     shutil.move(file, new_path)
                     files_info['video'].append(correct_file_name)
-                    files_info['known'].append(file_extention)
+                    files_info['known'].add(file_extention)
 
             elif file_extention in doc_extention:
                     new_path = path + '\\documents\\' + correct_file_name
                     shutil.move(file, new_path)
                     files_info['documents'].append(correct_file_name)
-                    files_info['known'].append(file_extention)
-                
+                    files_info['known'].add(file_extention)
+
             elif file_extention in audio_extention:
                     new_path = path + "\\audio\\" + correct_file_name
                     shutil.move(file, new_path)
                     files_info['audio'].append(correct_file_name)
-                    files_info['known'].append(file_extention)
+                    files_info['known'].add(file_extention)
 
             elif file_extention in archives_extention:
                     new_path = path + "\\archives\\" + correct_file_name
                     dir_like_name_archive = path + "\\archives\\" + f_name
                     files_info['archives'].append(correct_file_name)
-                    files_info['known'].append(file_extention)
+                    files_info['known'].add(file_extention)
                     try:
                          os.mkdir(dir_like_name_archive)
                     except FileExistsError:
@@ -116,13 +116,10 @@ def moving_files(path):
                     shutil.move(file, new_path)
 
             else:
-                files_info['unknown'].append(file_extention)
+                files_info['unknown'].add(file_extention)
 
         except FileNotFoundError:
                 continue
-    
-    files_info['unknown'] = [el for el, _ in groupby(files_info['unknown'])]
-    files_info['known'] = [el for el, _ in groupby(files_info['known'])]
     
     return files_info
 
