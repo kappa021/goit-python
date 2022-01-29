@@ -1,5 +1,5 @@
-import os, shutil
-
+import os, shutil, sys
+from itertools import groupby
 
 
 #--------------------- walk through files and folders -------------------------
@@ -13,6 +13,7 @@ def traversing_folders(path):
             list_dirs.append(os.path.join(root, name))
 
     return list_files, list_dirs
+
 
 #------------------------ rename files ----------------------
 def normalize(*args):
@@ -39,6 +40,7 @@ def normalize(*args):
 
     return clear_name
 
+
 # --------------------- create new dir -------------------------
 def create_new_dir(path):
 
@@ -59,7 +61,6 @@ def moving_files(path):
     incorrect_file, full_dirs = traversing_folders(path)
 
     files_info = {'images': [], 'archives': [], 'documents': [], 'audio': [], 'video': [], 'unknown': [], 'known': []}
-
     for file in incorrect_file:
         dir_name = os.path.dirname(file)
         file_name = os.path.splitext(os.path.basename(file))
@@ -67,37 +68,42 @@ def moving_files(path):
         file_extention = file_name[-1]
         correct_file_name = normalize(f_name) + file_extention
 
+        image_extention = (".jpeg", ".png", ".jpg", ".svg")
+        video_extention = (".avi", ".mp4", ".mov", ".mkv")
+        doc_extention = (".doc", ".docx", ".txt", ".pdf", ".xlsx", ".pptx")
+        audio_extention = (".mp3", ".ogg", ".wav", ".amr")
+        archives_extention = (".zip", ".gz", ".tar")
+
         try:
             if (path + '\\images') == dir_name or (path + '\\video') == dir_name or \
                 (path + '\\audio') == dir_name or (path + '\\documents') == dir_name or (path + '\\archives') == dir_name:
                 continue
 
-            if file_extention == '.jpeg' or file_extention == '.png' or file_extention == '.jpg' or file_extention == '.svg':
+            if file_extention in image_extention:
                 new_path = path + '\\images\\' + correct_file_name
                 shutil.move(file, new_path)
                 files_info['images'].append(correct_file_name)
                 files_info['known'].append(file_extention)
 
-            elif file_extention == ".avi" or file_extention == ".mp4" or file_extention == ".mov" or file_extention == ".mkv":
+            elif file_extention in video_extention:
                     new_path = path + "\\video\\" + correct_file_name
                     shutil.move(file, new_path)
                     files_info['video'].append(correct_file_name)
                     files_info['known'].append(file_extention)
 
-            elif file_extention == ".doc" or file_extention == ".docx" or file_extention == ".txt" or file_extention == ".pdf" \
-                    or file_extention == ".xlsx" or file_extention == ".pptx":
+            elif file_extention in doc_extention:
                     new_path = path + '\\documents\\' + correct_file_name
                     shutil.move(file, new_path)
                     files_info['documents'].append(correct_file_name)
                     files_info['known'].append(file_extention)
                 
-            elif file_extention == ".mp3" or file_extention == ".ogg" or file_extention == ".wav" or file_extention == ".amr":
+            elif file_extention in audio_extention:
                     new_path = path + "\\audio\\" + correct_file_name
                     shutil.move(file, new_path)
                     files_info['audio'].append(correct_file_name)
                     files_info['known'].append(file_extention)
 
-            elif file_extention == ".zip" or file_extention == ".gz" or file_extention == ".tar":
+            elif file_extention in archives_extention:
                     new_path = path + "\\archives\\" + correct_file_name
                     dir_like_name_archive = path + "\\archives\\" + f_name
                     files_info['archives'].append(correct_file_name)
@@ -115,7 +121,11 @@ def moving_files(path):
         except FileNotFoundError:
                 continue
     
+    files_info['unknown'] = [el for el, _ in groupby(files_info['unknown'])]
+    files_info['known'] = [el for el, _ in groupby(files_info['known'])]
+    
     return files_info
+
 
 #-----------------delete empty dirs--------------------
 def remove_empty_dir(path):
@@ -127,9 +137,18 @@ def remove_empty_dir(path):
             if not os.listdir(s):
                 os.rmdir(s)
 
-path = input("Enter your path")
 
-traversing_folders(path)
-create_new_dir(path)
-print(moving_files(path))
-remove_empty_dir(path)
+def main():
+    path = r""
+    path = ' '.join(sys.argv[1:])
+    if path:
+        traversing_folders(path)
+        create_new_dir(path)
+        print(moving_files(path))
+        remove_empty_dir(path) 
+    else:
+        print("Вы не ввели путь! Попробуйте ещё раз!")
+
+
+if __name__ == "__main__":
+    main()
