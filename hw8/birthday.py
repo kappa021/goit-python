@@ -7,7 +7,7 @@ def get_birthdays_per_week(users):
     start = datetime(curr.year, curr.month, curr.day) - timedelta(curr.weekday()) + timedelta(5)
     end = start + timedelta(7)
 
-    print(end)
+    days = [[], [], [], [], []]
 
     for user in users:
         name = user["name"]
@@ -15,25 +15,34 @@ def get_birthdays_per_week(users):
 
         if birth.replace(year=start.year) < start:
             continue
-        if birth.replace(year=end.year) >= end:
+        if birth >= end:
             continue;
 
         if birth.weekday() == 0 or birth.weekday() > 4:
-            print(f"Monday: {name}")
-        elif birth.weekday() == 1:
-            print(f"Tuesday: {name}")
-        elif birth.weekday() == 2:
-            print(f"Wednesday: {name}")
-        elif birth.weekday() == 3:
-            print(f"Thursday: {name}")
-        elif birth.weekday() == 4:
-            print(f"Friday: {name}")
+            days[0].append(name);
+        else:
+            days[birth.weekday()].append(name);
+    
+    for i, day in enumerate(days):
+        if i == 0:
+            print("Monday: ", end='')
+        elif i == 1:
+            print("Tuesday: ", end='')
+        elif i == 2:
+            print("Wednesday: ", end='')
+        elif i == 3:
+            print("Thursday: ", end='')
+        elif i == 4:
+            print("Friday: ", end='')
+
+        print(*day, sep=', ')
 
 
 users = [
     { "name": "Bill", "birthday": datetime.fromisoformat("1970-02-10 10:10:10") },
+    { "name": "Ash", "birthday": datetime.fromisoformat("1970-02-10 10:10:10") },
     { "name": "Vanya", "birthday": datetime.fromisoformat("2022-02-05 10:10:10") },
-    { "name": "Ak", "birthday": datetime.fromisoformat("1980-02-15 10:10:10") },
+    { "name": "Ak", "birthday": datetime.fromisoformat("2022-02-10 10:10:10") },
     { "name": "Zuk", "birthday": datetime.fromisoformat("2023-02-11 10:10:10") },
 ]
 
