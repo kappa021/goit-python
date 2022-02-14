@@ -1,7 +1,7 @@
 phoneBook = {}
 
 
-greeatCommand = ("hello", )
+greetCommand = ("hello", )
 addCommand = ("add", )
 changePhoneCommand = ("change", )
 showPhoneNumber = ("phone", )
@@ -23,58 +23,55 @@ def input_error(function):
 
 
 
-def greeting_command(string):
-    return "How can I help you?"
+def greeting_command():
+    print("How can I help you?")
 
 @input_error
 def add_contact(string):
     name, phone = string.split(" ")
     phoneBook[name] = phone
-    return "Contact added successfully"
+    print("Contact added successfully")
 
 @input_error
 def change_phone_number(string):
     name, new_phone = string.split(" ")
-    for key, val in phoneBook.items():
-        if key == name:
-            
-    pass
+    phoneBook[name] = new_phone
 
 @input_error
 def get_phone_number(string):
-    return f"Name: {string}, Phone: {phoneBook[string]}"
+    print(f"Name: {string}, Phone: {phoneBook[string]}")
 
 @input_error
-def show_all_contacts(string):
+def show_all_contacts():
     allContacts = []
     for value in phoneBook:
         allContacts.append(f"Name: {value}, Phone:{phoneBook[value]}")
     return allContacts
 
 
-def exit_command(string):
-    return "Good bye!"
+def exit_command():
+    print("Good bye!")
 
 
 def main():
     while True:
         c = input("Enter a command: ")
         command = c.lower()
-        if command in greeatCommand:
+        if command in greetCommand:
             greeting_command()
         elif  command in addCommand:
-            add_contact()
+            add_contact(c)
         elif command in changePhoneCommand:
-            change_phone_number()
+            change_phone_number(c)
         elif command in showPhoneNumber:
-            get_phone_number()
+            get_phone_number(c)
         elif command in showPhoneBook:
             show_all_contacts()
         elif command in exitCommand:
             exit_command()
             break
         else:
-            "This command is unlnown. Try again!"
+           print("This command is unlnown. Try again!")
 
-if __name__ == "__name__":
+if __name__ == "__main__":
     main()
