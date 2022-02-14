@@ -25,18 +25,15 @@ def add_contact(args):
 
 @input_error
 def change_phone_number(args):
-    if args[0] in phoneBook:
+    if args[0] not in phoneBook:
         raise KeyError
-    name, new_phone = args
-    phoneBook[name] = new_phone
+    if args[0] in phoneBook:
+        name, new_phone = args
+        phoneBook[name] = new_phone
     print("Phone number change successfully")
 
 @input_error
 def get_phone_number(args):
-    if args[0] in phoneBook:
-        raise KeyError
-    if len(phoneBook) == 0:
-        raise IndexError
     print(f"Name:{args[0]}, Phone: {phoneBook[args[0]]}") 
     
         
