@@ -1,52 +1,51 @@
 phoneBook = {}
 
-
-greetCommand = ("hello", )
-addCommand = ("add", )
-changePhoneCommand = ("change", )
-showPhoneNumber = ("phone", )
-showPhoneBook = ("show all", )
-exitCommand = ("good bye", "close", "exit")
-
-
 def input_error(function):
     def inner(string):
         try:
             return function(string)
         except KeyError:
-            return "Not such name exist."
+            print("Not such name exist.")
         except ValueError:
-            return "Enter the name and number after the command separated by a space."
+            print("Enter the name and number after the command separated by a space.")
         except IndexError:
-            return "Phone book is empty."
+            print("Phone book is empty.")
     return inner
-
-
 
 def greeting_command():
     print("How can I help you?")
 
 @input_error
-def add_contact(string):
-    name, phone = string.split(" ")
+def add_contact(args):
+    if len(args) < 2:
+        raise ValueError
+    name, phone = args
     phoneBook[name] = phone
     print("Contact added successfully")
 
 @input_error
-def change_phone_number(string):
-    name, new_phone = string.split(" ")
+def change_phone_number(args):
+    if args[0] in phoneBook:
+        raise KeyError
+    name, new_phone = args
     phoneBook[name] = new_phone
+    print("Phone number change successfully")
 
 @input_error
-def get_phone_number(string):
-    print(f"Name: {string}, Phone: {phoneBook[string]}")
-
+def get_phone_number(args):
+    if args[0] in phoneBook:
+        raise KeyError
+    if len(phoneBook) == 0:
+        raise IndexError
+    print(f"Name:{args[0]}, Phone: {phoneBook[args[0]]}") 
+    
+        
 @input_error
-def show_all_contacts():
-    allContacts = []
-    for value in phoneBook:
-        allContacts.append(f"Name: {value}, Phone:{phoneBook[value]}")
-    return allContacts
+def show_all_contacts(_):
+    if len(phoneBook) == 0:
+        raise IndexError 
+    for name, val in phoneBook.items():
+        print(name + ": " + (val))
 
 
 def exit_command():
@@ -56,18 +55,20 @@ def exit_command():
 def main():
     while True:
         c = input("Enter a command: ")
-        command = c.lower()
-        if command in greetCommand:
+        args = c.split(" ")
+
+        if args[0].lower() == "hello":
             greeting_command()
-        elif  command in addCommand:
-            add_contact(c)
-        elif command in changePhoneCommand:
-            change_phone_number(c)
-        elif command in showPhoneNumber:
-            get_phone_number(c)
-        elif command in showPhoneBook:
-            show_all_contacts()
-        elif command in exitCommand:
+        elif  args[0].lower() == "add":
+            add_contact(args[1:])
+        elif args[0].lower() == "change":
+            change_phone_number(args[1:])
+        elif args[0].lower() == "phone":
+            get_phone_number(args[1:])
+        elif len(args)>=2 and f"{args[0]} {args[1]}".lower() == "show all":
+            show_all_contacts([])
+        elif len(args)>=2 and f"{args[0]} {args[1]}".lower() == "good bye" \
+                                                or args[0].lower() == "close" or args[0].lower() == "exit":
             exit_command()
             break
         else:
