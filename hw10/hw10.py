@@ -16,31 +16,29 @@ class Phone(Field):
 
 
 class Record:
-
-    def __init__(self, name: str, phones: List[str] = None) -> None:
-        self.name = Name(name)
-        if phones == None:
+    def __init__(self, name: Name, phones: List[Phone] = None) -> None:
+        self.name = name
+        if phones is None:
             self.phones = []
         else:
-            self.phones = [Phone(phone) for phone in phones]
+            self.phones = phones
 
-    def add_phone(self, phone_number: str):
-        phone = Phone(phone_number)
+    def add_phone(self, phone: Phone):
         if phone not in self.phones:
             self.phones.append(phone)
 
-    def edit_phone(self, old_phone, new_phone):
+    def edit_phone(self, old_phone: Phone, new_phone: Phone):
         for phone in self.phones:
-            if phone.value == old_phone:
-                phone.value = new_phone
+            if phone.value == old_phone.value:
+                phone.value = new_phone.value
 
-    def delete_phone(self, phone_number: str):
+    def delete_phone(self, phone_number: Phone):
         for phone in self.phones:
-            if phone.value == phone_number:
+            if phone.value == phone_number.value:
                 self.phones.remove(phone)
         
     def __repr__(self) -> str:
-        return f"Name: {self.name.value}, Phones {[phone.value for phone in self.phones]}"
+        return f"Name: {self.name.value}, Phones {', '.join([str(phone.value) for phone in self.phones])}"
 
 
 class AddressBook(UserDict):
@@ -48,11 +46,11 @@ class AddressBook(UserDict):
     def add_record(self, record: Record):
         self.data[record.name.value] = record
     
-    def find_record(self, value: str):
-        return self.data.get(value)
+    def find_record(self, name: Name):
+        return self.data.get(name.value)
 
-    def delete_record(self, value: str):
-        self.data.pop(value)
+    def delete_record(self, value: Name):
+        self.data.pop(value.value)
 
     def __str__(self) -> str:
         return str(self.data)
@@ -61,26 +59,29 @@ class AddressBook(UserDict):
 def main():
     phone_book = AddressBook()
 
-    phone_book.add_record(Record("Andrey"))
-    phone_book.add_record(Record("Aleksey", ("0953550210",)))
-    phone_book.add_record(Record("Anita", ("0685979829", "0639323060")))
+    phone_book.add_record(Record(Name("Andrey")))
+    phone_book.add_record(Record(Name("Aleksey"), [Phone("0953550210")]))
+    phone_book.add_record(Record(Name("Anita"), [Phone("0685979829"), Phone("0639323060")]))
     print(phone_book)
     print("\n")
 
-    phone_book.delete_record("Anita")
+    phone_book.delete_record(Name("Anita"))
     print(phone_book)
     print("\n")
 
-    change_phone_number = phone_book.find_record("Aleksey")
+    change_phone_number = phone_book.find_record(Name("Aleksey"))
     print(change_phone_number)
     print("\n")
 
-    change_phone_number.add_phone("0956101472")
-    change_phone_number.edit_phone("0956101472", "0934440272" )
+    change_phone_number.add_phone(Phone("0956101472"))
     print(change_phone_number)
     print("\n")
 
-    change_phone_number.delete_phone("0953550210")
+    change_phone_number.edit_phone(Phone("0956101472"), Phone("0934440272"))
+    print(change_phone_number)
+    print("\n")
+
+    change_phone_number.delete_phone(Phone("0953550210"))
     print(change_phone_number)
     print("\n")
 
