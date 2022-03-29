@@ -12,7 +12,9 @@ class Name(Field):
 
 
 class Phone(Field):
-    pass
+    
+    def __eq__(self, other: object) -> bool:
+        return self.value == other.value
 
 
 class Record:
@@ -36,17 +38,16 @@ class Record:
         for phone in self.phones:
             if phone.value == phone_number.value:
                 self.phones.remove(phone)
-        
+
     def __repr__(self) -> str:
         return f"Name: {self.name.value}, Phones {', '.join([str(phone.value) for phone in self.phones])}"
 
 
 class AddressBook(UserDict):
-    
-    def add_record(self, record: Record):
-        self.data[record.name.value] = record
-    
-    def find_record(self, name: Name):
+    def add_record(self, rec: Record):
+        self.data[rec.name.value] = rec
+
+    def find_record(self, name: Name) -> Record:
         return self.data.get(name.value)
 
     def delete_record(self, value: Name):
@@ -61,7 +62,9 @@ def main():
 
     phone_book.add_record(Record(Name("Andrey")))
     phone_book.add_record(Record(Name("Aleksey"), [Phone("0953550210")]))
-    phone_book.add_record(Record(Name("Anita"), [Phone("0685979829"), Phone("0639323060")]))
+    phone_book.add_record(
+        Record(Name("Anita"), [Phone("0685979829"), Phone("0639323060")])
+    )
     print(phone_book)
     print("\n")
 
@@ -72,8 +75,17 @@ def main():
     change_phone_number = phone_book.find_record(Name("Aleksey"))
     print(change_phone_number)
     print("\n")
+    
 
     change_phone_number.add_phone(Phone("0956101472"))
+    change_phone_number.add_phone(Phone("0956101472"))
+    print(change_phone_number)
+    print("\n")
+    
+    p1 = Phone("0956101472")
+    
+    change_phone_number.add_phone(p1)
+    change_phone_number.add_phone(p1)
     print(change_phone_number)
     print("\n")
 
